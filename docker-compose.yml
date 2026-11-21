@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-#1.网页容器
+  #------------------------ 业务集群----------------
   web:
     image: nginx:latest
     container_name: my-web-custom
@@ -9,9 +7,9 @@ services:
       - "8080:80"
     volumes:
       - D:\my-website:/usr/share/nginx/html
-#2.数据库容器
+  
   db:
-    image: docker.xuanyuan.me/library/mysql:8.0
+    image: mysql:8.0
     container_name: my-mysql
     ports:
       - "3306:3306"
@@ -19,13 +17,110 @@ services:
       - MYSQL_ROOT_PASSWORD=123456
     volumes:
       - mysql_data:/var/lib/mysql
-#3.你的自愈机器人
+  
   heal-bot:
-    build: . 
+    build: .
     container_name: my-heal-bot
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - web
+  #--------监控集群-------
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    restart: always
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: always
+
+#声明全局数据卷
 volumes:
   mysql_data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# version: '3.8'
+
+# services:
+# #1.网页容器
+#   web:
+#     image: nginx:latest
+#     container_name: my-web-custom
+#     ports:
+#       - "8080:80"
+#     volumes:
+#       - D:\my-website:/usr/share/nginx/html
+# #2.数据库容器
+#   db:
+#     image: docker.xuanyuan.me/library/mysql:8.0
+#     container_name: my-mysql
+#     ports:
+#       - "3306:3306"
+#     environment:
+#       - MYSQL_ROOT_PASSWORD=123456
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+# #3.你的自愈机器人
+#   heal-bot:
+#     build: . 
+#     container_name: my-heal-bot
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock
+#     depends_on:
+#       - web
+# volumes:
+#   mysql_data:
