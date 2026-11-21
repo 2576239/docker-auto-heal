@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+#1.网页容器
+  web:
+    image: nginx:latest
+    container_name: my-web-custom
+    ports:
+      - "8080:80"
+    volumes:
+      - D:\my-website:/usr/share/nginx/html
+#2.数据库容器
+  db:
+    image: docker.xuanyuan.me/library/mysql:8.0
+    container_name: my-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - mysql_data:/var/lib/mysql
+#3.你的自愈机器人
+  heal-bot:
+    build: . 
+    container_name: my-heal-bot
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - web
+volumes:
+  mysql_data:
