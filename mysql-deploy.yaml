@@ -1,0 +1,57 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mysql-deploy
+# spec:
+#   replicas: 1  #只需要一个mysql
+#   selector:
+#     matchLabels:
+#       app: mysql
+#   template:
+#     metadata:
+#       labels:
+#         app: mysql
+#     spec:
+#       containers:
+#       - name: mysql
+#         image: docker.1ms.run/library/mysql:8.0  #用镜像源拉取
+#         imagePullPolicy: IfNotPresent
+#         env:
+#         - name: MYSQL_ROOT_PASSWORD
+#           value: "123456"
+#         ports:
+#         - containerPort: 3306
+#         volumeMounts:
+#         - name: mysql-storage
+#           mountPath: /var/lib/mysql  #把硬盘挂在mysql 存储的目录
+#       volumes:
+#       - name: mysql-storage
+#         persistentVolumeClaim:
+#           claimName: mysql-pv-volume  #告诉 pod：用刚才写的那份mysql-pvc申请表
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+spec:
+  replicas: 1  #只需要一个mysql
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest  #用镜像源拉取
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-storage
+          mountPath: /usr/share/nginx/html  #把硬盘挂在mysql 存储的目录
+      volumes:
+      - name: nginx-storage
+        emptyDir: {}
+        # persistentVolumeClaim:
+        #   claimName: mysql-pv-claim  #告诉 pod：用刚才写的那份mysql-pvc申请表

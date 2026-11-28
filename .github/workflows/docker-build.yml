@@ -1,0 +1,30 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [ "main" ] # 只要 main 分支有代码推送，就触发机器人
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # GitHub 白送你一台 Ubuntu 服务器干活
+
+    steps:
+    # 1. 把你的代码拉到机器人的电脑里
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. 登录 Docker Hub（读取你保险箱里的密码）
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    # 3. 自动打包并推送
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        # 自动打上 latest 标签
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-heal-bot:latest

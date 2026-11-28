@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim #申请表名字
+  labels: 
+    type: local
+spec:
+  storageClassName: manual #和pv文件的一模一样
+  accessModes:
+    - ReadWriteOnce   #权限：RWO
+  resources:
+    requests:
+      storage: 1Gi #申请1G

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume #硬盘名字
+spec:
+  storageClassName: manual #存储类的名字
+  capacity:
+    storage: 1Gi #硬盘的容量为1G
+  accessModes:
+    - ReadWriteOnce   #权限：只能被一个节点以读写模式挂载（RWO）
+  hostPath:
+    path: "/mnt/host/d/nginx-k8s-data" #数据真实存放在windows的D盘的这个文件夹
+    type: Directory
+  #  type: DirectoryOrCreate # 如果没找到这个文件夹，自动帮我创建一个
+  # persistentVolumeReclainPolicy: Delete  # 告诉k8s，以后解除绑定了的直接删，别留着变 Released
